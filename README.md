@@ -1,12 +1,12 @@
 # 🧭 Sciences & Numérique
 
-Site pédagogique gratuit pour le lycée : corrections d'exercices et activités, jeux, escape game et QCM à destination des classes de **SNT**, **STI2D** et de **Seconde (option SI/CIT)**.
+Site pédagogique gratuit pour le lycée : activités, jeux, escape game et QCM à destination des classes de **SNT**, **STI2D** et de **Seconde (option SI/CIT)**.
 
-**👉 [Voir le site en ligne](https://leprofenappui.github.io/)**
+**👉 [Voir le site en ligne](https://lecointechno.github.io/)**
 
 ## Hi there 👋
 
-Enseignant en Sciences de l'Ingénieur, je propose ici des ressources ludiques et bienveillantes pour aider les élèves à mieux comprendre le numérique — ses usages, ses risques, et les bons réflexes à adopter.
+Enseignant en Sciences Industrielles pour l'Ingénieur, je propose ici des ressources ludiques.
 
 ## Structure du site
 
