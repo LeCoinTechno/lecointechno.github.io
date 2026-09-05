@@ -52,4 +52,8 @@
     <loc>https://lecointechno.github.io/jeu/snt_reseauxsociaux_quiz_tiktok.html</loc>
     <priority>0.8</priority>
   </url>
+    <url>
+    <loc>https://lecointechno.github.io/jeu/snt_reseauxsociaux_qcm_partie1</loc>
+    <priority>0.8</priority>
+  </url>
 </urlset>
