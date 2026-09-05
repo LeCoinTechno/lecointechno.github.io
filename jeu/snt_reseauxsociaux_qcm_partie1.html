@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Les réseaux sociaux (partie 1) · SNT</title>
+<style>
+:root{
+  --bg:#FFFFFF;--surface:#FFFFFF;--surface2:#DDDDDD;
+  --text:#111111;--text2:#333333;--text3:#555555;
+  --green:#2E7D32;--green-l:#1B5E20;--green-h:#43A047;
+  --orange:#E65100;--orange-l:#BF360C;--orange-h:#EF6C00;
+  --red:#B71C1C;--red-l:#7F0000;--red-h:#C62828;
+  --accent:#4A42C0;
+  --radius:14px;
+  font-family:'Inter',system-ui,sans-serif;font-size:15px;line-height:1.5;color:var(--text);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:2rem 1rem}
+.wrap{width:100%;max-width:700px}
+.hidden{display:none!important}
+
+/* ── Accueil ── */
+.home{text-align:center;padding:2.5rem 1rem}
+.home-logo{font-size:4rem;margin-bottom:1rem}
+.home h1{font-size:1.8rem;font-weight:600;margin-bottom:.5rem}
+.home .source{font-size:12px;color:var(--text3);max-width:480px;margin:0 auto 1.5rem;line-height:1.7}
+.home .source strong{color:var(--text2)}
+.start-btn{background:var(--accent);color:#fff;border:none;border-radius:var(--radius);padding:14px 36px;font-size:16px;font-weight:600;cursor:pointer;transition:opacity .2s;width:100%}
+.start-btn:hover{opacity:.88}
+
+/* ── Barre haut ── */
+.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;gap:12px;flex-wrap:wrap}
+.q-label{font-size:13px;color:var(--text3);font-weight:500}
+.prog-track{flex:1;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;background:var(--accent);border-radius:3px;transition:width .4s}
+.score-badge{background:var(--surface);border:1px solid var(--surface2);border-radius:20px;padding:4px 14px;font-size:13px;font-weight:600;color:var(--text);white-space:nowrap}
+
+/* ── Carte question ── */
+.q-card{background:var(--surface);border:1px solid var(--surface2);border-radius:var(--radius);padding:1.5rem;margin-bottom:1rem;min-height:130px;display:flex;flex-direction:column;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.q-num{font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem}
+.q-text{font-size:1.05rem;font-weight:500;color:var(--text);line-height:1.6}
+.q-stat{font-size:13px;color:var(--text2);margin-top:.4rem}
+
+/* ── Réponses ── */
+.answers{display:flex;flex-direction:column;gap:10px;margin-bottom:1rem}
+.ans-btn{border:2px solid var(--surface2);border-radius:var(--radius);padding:14px 18px;font-size:15px;font-weight:500;cursor:pointer;text-align:left;width:100%;transition:all .18s;display:flex;align-items:center;gap:12px;color:var(--text);background:#fff;position:relative;overflow:hidden}
+.ans-btn::before{content:'';position:absolute;inset:0;background:rgba(0,0,0,0);transition:background .15s}
+.ans-btn:hover:not(:disabled)::before{background:rgba(0,0,0,.04)}
+.ans-btn:disabled{cursor:default}
+.ans-a{border-color:var(--green)}
+.ans-b{border-color:var(--orange)}
+.ans-c{border-color:var(--red)}
+.ans-a:hover:not(:disabled){background:#F1F8F1}
+.ans-b:hover:not(:disabled){background:#FFF6EE}
+.ans-c:hover:not(:disabled){background:#FDF1F0}
+.ans-btn.correct{background:#E8F5E9;border-color:var(--green);border-width:3px;opacity:1}
+.ans-btn.wrong{opacity:.45}
+.ans-letter{width:28px;height:28px;border-radius:50%;background:var(--surface2);color:var(--text);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.ans-a .ans-letter{background:var(--green);color:#fff}
+.ans-b .ans-letter{background:var(--orange);color:#fff}
+.ans-c .ans-letter{background:var(--red);color:#fff}
+.ans-text{flex:1}
+
+/* ── Feedback ── */
+.feedback{border-radius:var(--radius);padding:12px 16px;font-size:13px;display:flex;align-items:flex-start;gap:10px;line-height:1.55;margin-bottom:1rem}
+.feedback.ok{background:#E8F5E9;border:1px solid var(--green);color:#1B5E20}
+.feedback.ko{background:#FDECEA;border:1px solid var(--red);color:#B71C1C}
+.fb-icon{font-size:1.1rem;flex-shrink:0;margin-top:1px}
+.next-btn{background:var(--accent);color:#fff;border:none;border-radius:var(--radius);padding:12px;font-size:15px;font-weight:600;cursor:pointer;width:100%;transition:opacity .2s;margin-top:4px}
+.next-btn:hover{opacity:.88}
+
+/* ── Résultat ── */
+.result{text-align:center;padding:2.5rem 1rem}
+.res-medal{font-size:5rem;display:block;margin-bottom:.75rem}
+.result h2{font-size:1.6rem;font-weight:700;margin-bottom:.4rem}
+.res-score{font-size:3rem;font-weight:800;color:var(--accent);margin:.5rem 0}
+.result p{color:var(--text2);font-size:14px;margin-bottom:1.5rem}
+.res-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.5rem}
+.rstat{background:var(--surface);border:1px solid var(--surface2);border-radius:var(--radius);padding:12px 8px;text-align:center}
+.rstat-val{font-size:1.4rem;font-weight:700;color:var(--text);display:block}
+.rstat-lbl{font-size:11px;color:var(--text3)}
+.replay-btn{background:var(--accent);color:#fff;border:none;border-radius:var(--radius);padding:13px;font-size:15px;font-weight:600;cursor:pointer;width:100%;transition:opacity .2s}
+.replay-btn:hover{opacity:.88}
+
+/* ── Review ── */
+.review-item{background:var(--surface);border:1px solid var(--surface2);border-radius:var(--radius);padding:12px 16px;margin-bottom:10px;text-align:left}
+.review-q{font-size:13px;font-weight:500;color:var(--text2);margin-bottom:6px}
+.review-answer{font-size:13px;display:flex;align-items:center;gap:6px}
+.review-answer.ok{color:#1B5E20}
+.review-answer.ko{color:#B71C1C}
+
+@media(max-width:480px){.res-grid{grid-template-columns:1fr}}
+
+/* ── Version ordinateur : tout est agrandi ── */
+@media(min-width:900px){
+  .wrap{max-width:980px}
+  body{padding:3.5rem 2rem}
+  .home-logo{font-size:6rem}
+  .home h1{font-size:3rem}
+  .home .source{font-size:17px;max-width:680px}
+  .start-btn{font-size:22px;padding:20px 48px}
+  .q-label{font-size:18px}
+  .score-badge{font-size:18px;padding:8px 20px}
+  .prog-track{height:9px}
+  .q-card{padding:2.5rem;min-height:200px}
+  .q-num{font-size:15px}
+  .q-text{font-size:1.9rem;line-height:1.5}
+  .q-stat{font-size:16px}
+  .ans-btn{padding:22px 26px;font-size:22px;gap:18px}
+  .ans-letter{width:40px;height:40px;font-size:18px}
+  .feedback{font-size:18px;padding:18px 22px}
+  .fb-icon{font-size:1.6rem}
+  .feedback strong{font-size:19px}
+  .feedback span[style]{font-size:16px!important}
+  .next-btn{font-size:20px;padding:18px}
+  .res-medal{font-size:7rem}
+  .result h2{font-size:2.4rem}
+  .res-score{font-size:4.5rem}
+  .result p{font-size:19px}
+  .rstat-val{font-size:2rem}
+  .rstat-lbl{font-size:14px}
+  .replay-btn{font-size:20px;padding:18px}
+  .review-q{font-size:17px}
+  .review-answer{font-size:16px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ACCUEIL -->
+<div id="home">
+  <div class="home">
+    <div class="home-logo">🌐</div>
+    <h1>Les réseaux sociaux</h1>
+    <p class="source">Quiz basé sur le cours <strong>« Les réseaux sociaux »</strong> — partie 1<br>
+    Caractéristiques des réseaux sociaux : définition, panorama, identité numérique</p>
+    <button class="start-btn" onclick="start()">Lancer le quiz →</button>
+  </div>
+</div>
+
+<!-- JEU -->
+<div id="game" class="hidden">
+  <div class="top-bar">
+    <span class="q-label" id="qlabel">1 / 10</span>
+    <div class="prog-track"><div class="prog-fill" id="prog" style="width:0%"></div></div>
+    <span class="score-badge">⭐ <span id="sdisp">0</span></span>
+  </div>
+  <div class="q-card" id="qcard">
+    <div class="q-num" id="qnum"></div>
+    <div class="q-text" id="qtext"></div>
+    <div class="q-stat" id="qstat"></div>
+  </div>
+  <div class="answers" id="answers"></div>
+  <div id="fb" class="hidden"></div>
+  <button class="next-btn hidden" id="next-btn" onclick="nextQ()">Question suivante →</button>
+</div>
+
+<!-- RÉSULTAT -->
+<div id="result" class="hidden result"></div>
+
+</div>
+
+<script>
+const QS = [
+  {
+    num:"Question 1",
+    text:"Qu'est-ce qu'un réseau social ?",
+    stat:"SNT · Les réseaux sociaux — partie 1",
+    opts:["Un service Web permettant de créer un profil et de se mettre en relation avec d'autres internautes","Un espace de stockage en ligne permettant de sauvegarder ses photos et vidéos personnelles","Un protocole technique utilisé pour connecter les appareils à Internet"],
+    ok:0,
+    expl:"Un réseau social est un service Web (site, application) permettant de créer une page personnelle (profil) pour se mettre en relation avec d'autres internautes et développer des communautés d'intérêts."
+  },
+  {
+    num:"Question 2",
+    text:"Lequel de ces réseaux sociaux est un réseau « généraliste » ?",
+    stat:"SNT · Les réseaux sociaux — partie 1",
+    opts:["Facebook","Instagram","YouTube"],
+    ok:0,
+    expl:"Facebook est l'exemple de réseau social généraliste. Instagram est positionné sur les photos et vidéos, YouTube sur les vidéos longues et courtes : ce sont des positionnements plus spécifiques."
+  },
+  {
+    num:"Question 3",
+    text:"Quel est le principe de LinkedIn ?",
+    stat:"SNT · Les réseaux sociaux — partie 1",
+    opts:["Réseau social professionnel","Réseau social généraliste","Partage de contenus"],
+    ok:0,
+    expl:"LinkedIn est un réseau social professionnel (profil pro, recommandations, offres d'emploi), à ne pas confondre avec un réseau généraliste comme Facebook."
+  },
+  {
+    num:"Question 4",
+    text:"Quelle est approximativement la part de la population française utilisant les réseaux sociaux ?",
+    stat:"SNT · Les réseaux sociaux — partie 1",
+    opts:["65 %","75 %","85 %"],
+    ok:1,
+    expl:"En France, il y a 50,4 millions d'utilisateurs de réseaux sociaux, soit 75,7 % de la population (Digital Report/2025)."
+  },
+  {
+    num:"Question 5",
+    text:"Qu'est-ce que l'identité numérique ?",
+    stat:"SNT · Les réseaux sociaux — partie 1",
+    opts:["L'ensemble des traces numériques laissées par un utilisateur","La perception que les internautes ont d'une personne à partir de ce qu'elle publie","Le mot de passe utilisé pour se connecter à un réseau social"],
+    ok:0,
+    expl:"L'identité numérique désigne l'ensemble des traces numériques laissées par un utilisateur. La perception qu'en ont les internautes correspond en fait à l'e-réputation, une notion différente."
+  },
+  {
+    num:"Question 6",
+    text:"Comment définir l'e-réputation ?",
+    stat:"SNT · Les réseaux sociaux — partie 1",
+    opts:["La perception que les internautes se font d'une personne, une marque ou une entreprise selon ce qu'elle laisse sur le Web","L'ensemble des traces numériques laissées par un utilisateur","Le classement d'un site dans les résultats d'un moteur de recherche"],
+    ok:0,
+    expl:"L'e-réputation est la perception que les internautes se font d'une marque, d'une entreprise ou d'un individu selon les éléments qu'il laisse sur le Web — à distinguer de l'identité numérique, qui est l'ensemble des traces elles-mêmes."
+  },
+  {
+    num:"Question 7",
+    text:"Quelle affirmation décrit correctement l'identification et l'authentification ?",
+    stat:"SNT · Les réseaux sociaux — partie 1",
+    opts:["L'identification permet d'identifier un utilisateur de manière unique, l'authentification vérifie son identité","L'authentification permet d'identifier un utilisateur de manière unique, l'identification vérifie son identité","Ce sont deux mots qui désignent exactement la même chose"],
+    ok:0,
+    expl:"L'identification permet d'identifier de manière unique un utilisateur (ex. identifiant), tandis que l'authentification consiste à vérifier son identité (ex. mot de passe)."
+  },
+];
+
+let idx=0, score=0, ok=0, ko=0, answered=false, userAnswers=[];
+
+function start(){
+  document.getElementById('home').classList.add('hidden');
+  document.getElementById('game').classList.remove('hidden');
+  loadQ();
+}
+
+function loadQ(){
+  answered=false;
+  const q=QS[idx];
+  document.getElementById('qlabel').textContent=(idx+1)+' / '+QS.length;
+  document.getElementById('prog').style.width=((idx)/QS.length*100)+'%';
+  document.getElementById('sdisp').textContent=score;
+  document.getElementById('qnum').textContent=q.num;
+  document.getElementById('qtext').textContent=q.text;
+  document.getElementById('qstat').textContent=q.stat;
+  document.getElementById('fb').className='hidden';
+  document.getElementById('fb').innerHTML='';
+  document.getElementById('next-btn').classList.add('hidden');
+
+  const letters=['A','B','C'];
+  const colors=['ans-a','ans-b','ans-c'];
+  document.getElementById('answers').innerHTML=q.opts.map((o,i)=>
+    `<button class="ans-btn ${colors[i]}" onclick="answer(${i},this)">
+      <span class="ans-letter">${letters[i]}</span>
+      <span class="ans-text">${o}</span>
+    </button>`
+  ).join('');
+}
+
+function answer(i,el){
+  if(answered) return;
+  answered=true;
+  const q=QS[idx];
+  const isOk=(i===q.ok);
+  document.querySelectorAll('.ans-btn').forEach(b=>b.disabled=true);
+  if(isOk){
+    el.classList.add('correct');
+    document.querySelectorAll('.ans-btn').forEach((b,j)=>{if(j!==i) b.classList.add('wrong')});
+    score+=100; ok++;
+    showFb('ok','✅','Correct !',q.expl);
+  } else {
+    el.classList.add('wrong');
+    const correctEl=document.querySelectorAll('.ans-btn')[q.ok];
+    correctEl.classList.add('correct');
+    document.querySelectorAll('.ans-btn').forEach((b,j)=>{if(j!==q.ok&&j!==i) b.classList.add('wrong')});
+    ko++;
+    showFb('ko','❌','Raté ! La bonne réponse était : '+q.opts[q.ok],q.expl);
+  }
+  userAnswers.push({q:q.text,chose:q.opts[i],correct:q.opts[q.ok],ok:isOk});
+  document.getElementById('sdisp').textContent=score;
+  document.getElementById('next-btn').classList.remove('hidden');
+  if(idx+1===QS.length) document.getElementById('next-btn').textContent='Voir les résultats →';
+}
+
+function showFb(type,icon,title,detail){
+  const el=document.getElementById('fb');
+  el.className=`feedback ${type}`;
+  el.innerHTML=`<span class="fb-icon">${icon}</span><div><strong>${title}</strong><br><span style="font-size:12px">${detail}</span></div>`;
+}
+
+function nextQ(){
+  idx++;
+  if(idx>=QS.length){endGame();return;}
+  loadQ();
+}
+
+function endGame(){
+  document.getElementById('game').classList.add('hidden');
+  document.getElementById('prog').style.width='100%';
+  const pct=ok/QS.length;
+  const medal=pct===1?'🥇':pct>=.8?'🥈':pct>=.6?'🥉':'📚';
+  const title=pct===1?'Score parfait !':pct>=.8?'Excellent !':pct>=.6?'Bien joué !':'À retravailler !';
+  const msg=pct===1?'Tu maîtrises parfaitement les caractéristiques des réseaux sociaux vues en cours.':
+            pct>=.6?'Tu as de bonnes connaissances sur les réseaux sociaux et leurs caractéristiques.':
+            'Relis la partie 1 du cours (« Les caractéristiques des réseaux sociaux ») et recommence !';
+  const r=document.getElementById('result');
+  r.classList.remove('hidden');
+  r.innerHTML=`
+<span class="res-medal">${medal}</span>
+<h2>${title}</h2>
+<div class="res-score">${score} pts</div>
+<p>${msg}</p>
+<div class="res-grid">
+  <div class="rstat"><span class="rstat-val">${ok}/${QS.length}</span><span class="rstat-lbl">Bonnes réponses</span></div>
+  <div class="rstat"><span class="rstat-val">${ko}</span><span class="rstat-lbl">Erreurs</span></div>
+  <div class="rstat"><span class="rstat-val">${Math.round(pct*100)} %</span><span class="rstat-lbl">Score</span></div>
+</div>
+<div style="text-align:left;margin-bottom:1.5rem">
+  <p style="font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;font-weight:600;margin-bottom:.75rem">Récapitulatif</p>
+  ${userAnswers.map(a=>`
+  <div class="review-item">
+    <div class="review-q">${a.q}</div>
+    <div class="review-answer ${a.ok?'ok':'ko'}">${a.ok?'✓':'✗'} ${a.chose}${!a.ok?' → Bonne réponse : '+a.correct:''}</div>
+  </div>`).join('')}
+</div>
+<button class="replay-btn" onclick="replay()">↺ Rejouer</button>`;
+}
+
+function replay(){
+  idx=0;score=0;ok=0;ko=0;answered=false;userAnswers=[];
+  document.getElementById('result').classList.add('hidden');
+  document.getElementById('game').classList.remove('hidden');
+  document.getElementById('sdisp').textContent=0;
+  document.getElementById('prog').style.width='0%';
+  loadQ();
+}
+</script>
+</body>
+</html>
